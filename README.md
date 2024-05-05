@@ -164,7 +164,7 @@ In order to check how the weekly grosses would affect in the next years a 2-year
 
 In this graph the outlier week from 2016 can be also distinguished. The projections seem to have an increasing tendency, as expected. Note that this is not what actually happened...but no one (not even Prophet) expected Covid-19 to appear!!
 
-prophet_components_fc
+![prophet_components_fc](Images/prophet_components_fc.png)
 
 xxxxxxx
 
