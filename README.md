@@ -53,7 +53,7 @@ nulls = pd.DataFrame(df_grosses.isna().sum()/len(df_grosses))
 nulls = nulls.reset_index()
 nulls.columns = ['column_name', 'Percentage Null Values']
 nulls.sort_values(by='Percentage Null Values', ascending = False)
-
+```
 <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -151,7 +151,7 @@ nulls.sort_values(by='Percentage Null Values', ascending = False)
 </table>
 </div>
 
-  ```
+
 The database was quite clean and only three variables had some missing data, but not enough to discard them for this reason. Also, no duplicate observations were found.
 
 ## Time Series Analysis
@@ -293,6 +293,8 @@ Numerical data was then normalized, scaled and standarised (also with the Normal
 
 The OLS model was prsented using the Linear Regression Library:
 
+``` Python
+
                             OLS Regression Results                            
 ==============================================================================
 Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.639
@@ -336,6 +338,7 @@ Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 [2] The condition number is large, 1.43e+04. This might indicate that there are
 strong multicollinearity or other numerical problems.
+```
 
 Most variables are significant (i.e. make an effect in the dependant variable) except the fact that the musical is showd in the Bradhurst Theatre or whether it was a pop-rock musical or mixed. This is also shown in the fact that the confidence intervals for these variables include the 0. As a result, the effect of these inputs may be any (positive, zero, negative) so no conclusions can be extracted from them.
 Other variables such as the top price of tickets or the number of seats sold clearly have an impact on weekly grosses. For example, a seat sold increases the weekly grosses in 1,242$. The fit of the model is pretty good given that the R2 is 0.63 (63% of variations in Y correspond to variations in Xs).
@@ -343,6 +346,9 @@ Other variables such as the top price of tickets or the number of seats sold cle
 However, when we standarise or scale the variables the results differ!:
 
 *Scaled Model*
+
+``` Python 
+
                             OLS Regression Results                            
 ==============================================================================
 Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.989
@@ -384,9 +390,11 @@ Kurtosis:                      10.590   Cond. No.                         35.2
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-
+```
 
 *Standarised Model*
+
+``` Python
 
                             OLS Regression Results                            
 ==============================================================================
@@ -429,6 +437,7 @@ Kurtosis:                      10.590   Cond. No.                         27.7
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+```
 
 Results look a bit more logical (e.g. the constant here shows that when nothing else is considered, the weekly grosses are approx. $677k). But the R2 in both standarised and scaled models is too good! are overfitting the model? why the normalised is better and the other 2 exactly match in such a high number?
 
@@ -455,6 +464,8 @@ Maybe the reason for such good fit is that we are including variables that are h
 Let's take the average price out from the analysis!
 
 *Standarised*
+
+``` Python
 
                             OLS Regression Results                            
 ==============================================================================
@@ -499,6 +510,9 @@ Notes:
 
 Results are now more realistic (R2=0.89). In any case...we are going to eliminate the variable seats in theatre. It is highly correlated to seats sold (0.8):
 
+```
+
+``` Python
                             OLS Regression Results                            
 ==============================================================================
 Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.889
@@ -538,7 +552,9 @@ Kurtosis:                       4.481   Cond. No.                         25.0
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+```
 
+```Python
 
 And also the weekly gross overall, given this is the weekly gross for all shows, so a sum of the weekly gross...
 
@@ -581,6 +597,7 @@ Kurtosis:                       2.737   Cond. No.                         24.7
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
+```
 In this case, the model fits much more reasonable...the R2 says that 75% of the changes in weekly grosses are explained by the Xs. The variable weeknumber is non significant but it makes sense as it has no linear relationship with the Y
 
 ### Split, train, test
