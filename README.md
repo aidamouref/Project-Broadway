@@ -13,11 +13,10 @@ Let the show begin!
 
 * Data Sources
 * Metadata
-* Exploratory Data Analysis (EDA)
-* Feature Engineering (Transformation, Selection, Generation)
-* Preprocessing for Linear Regression
-* Linear Regression Modelling 
-* Model results analysis
+* General Exploratory Data Analysis (EDA)
+* Time Series Analysis
+* Regression Analysis: specific EDA, Feature Engineering, Preprocessing
+* Linear Regression Modelling
 * To wrap up (Conclusions)
 
 
@@ -45,6 +44,8 @@ considered unnecessary and therefore was discarded.
 - previews: Number of preview performances in the week. Previews occur before a show's official open.
 
 ### General Exploratory Data Analysis
+
+![cleaning_annie](Images/cleaning_annie.png)
 
 A general overview of all the variables was made in order to get a glimpse of how these were (how many unique values these variables had, a description of the numerical variables to check their summary values, the presence of missing data, the presence of duplicated observations and so on):
 
@@ -142,6 +143,8 @@ The database was quite clean and only three variables had some missing data, but
 
 ## Time Series Analysis
 
+![backtofuture_timeseries](Images/backtofuture_timeseries.png)
+
 For this analysis, the variable 'week_ending' was considered, together with our variable of interest (weekly_grosses). 'week_ending'  was transformed to a datetime variable in order to perform the analysis and sorted from early to late dates. First and last value were checked to see the temporal scope (June 1985 to March 2020). This showed no effects from Covid-19 pandemia would affect here. 
 
 Perfoming a weekly analysis we can see a nice increasing trend of the period 1985-2020 (march). Weekly grosses smoothly increase over time:
@@ -166,7 +169,7 @@ In this graph the outlier week from 2016 can be also distinguished. The projecti
 
 ![prophet_components_fc](Images/prophet_components_fc.png)
 
-xxxxxxx
+The components show a clear increasing tendency of the weekly grosses over the years. Also, the pattern within a year shows that summer months show higher weekly grosses (theatre season starts in June, also summer holidays...) decreases in September (back to work, back to school) and increases again in November-December (Christmas maybe?)
 
 
 ## Regression Analysis
@@ -275,9 +278,13 @@ None of them were discarded as the R2 was considered not high enough.
 ### Final Steps before the Model:
 Now variables were clean and transformed, categorical variables were encoded in order to be included in the model. The encoding was performed using the OneHotEncoder from Sklearn. One of the categories (legit for musical_types and Ambassador theatre for theatres)was not considered by this method in order to avoid model overfitting.
 
-Numerical data was then normalized, scaled and standarised (also with the Normalizer, MinMaxScaler and StandardScaler methods from Sklearn) to xxxxx.
+Numerical data was then normalized, scaled and standarised (also with the Normalizer, MinMaxScaler and StandardScaler methods from Sklearn) to check the best method to transform the data.
 
-The OLS model was prsented using the Linear Regression Library:
+## Regression Modelling
+
+![harry_potter_predictions](Images/harry_potter_predictions.png)
+
+The OLS model was presented using the Linear Regression Library:
 
 ``` Python
 
@@ -425,7 +432,7 @@ Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 ```
 
-Results look a bit more logical (e.g. the constant here shows that when nothing else is considered, the weekly grosses are approx. $677k). But the R2 in both standarised and scaled models is too good! are overfitting the model? why the normalised is better and the other 2 exactly match in such a high number?
+The R2 in both standarised and scaled models is too good! are overfitting the model? why the normalised is better and the other 2 exactly match in such a high number?
 
 When revising again the distributions of the normalised, standard and scaled variables:
 
@@ -443,147 +450,59 @@ When revising again the distributions of the normalised, standard and scaled var
 
 Results show that the normalised are now skewed! the shape of the standarised and scaled ones is practically identical and much more centered. The normalisation is not a good approach for this dataset. This means that the weekly grosses is really well explained by the explicative variables selected.
 
-### Wait! but...is not TOO good?
+### Wait! but...is it not TOO good?
 
 Maybe the reason for such good fit is that we are including variables that are highly correlated to the weekly grosses. The correlation matrix didn't show it but the average ticket is mainly the grosses by the number of tickets sold (i.e. number of seats sold in way). But as it is the average the correlation doesn't show that well in the matrix. 
+Also, variables 'seats in theatre' is quite correlated to seats sold. And potential gross as well as weekly gross overall might be quite related to the Y? There is quite high correlation (~0.6-0.7) between some dependant variables and also with the Y. So...let's take all these from the analysis!
 
-Let's take the average price out from the analysis!
+
 
 *Standarised*
 
 ``` Python
-
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.892
-Model:                            OLS   Adj. R-squared:                  0.892
-Method:                 Least Squares   F-statistic:                 2.312e+04
-Date:                Sun, 05 May 2024   Prob (F-statistic):               0.00
-Time:                        12:46:32   Log-Likelihood:            -2.5687e+05
-No. Observations:               44765   AIC:                         5.138e+05
-Df Residuals:                   44748   BIC:                         5.139e+05
-Df Model:                          16                                         
+Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.747
+Model:                            OLS   Adj. R-squared:                  0.747
+Method:                 Least Squares   F-statistic:                 1.016e+04
+Date:                Mon, 06 May 2024   Prob (F-statistic):               0.00
+Time:                        19:45:06   Log-Likelihood:            -2.7595e+05
+No. Observations:               44765   AIC:                         5.519e+05
+Df Residuals:                   44751   BIC:                         5.521e+05
+Df Model:                          13                                         
 Covariance Type:            nonrobust                                         
 ==============================================================================================
                                  coef    std err          t      P>|t|      [0.025      0.975]
 ----------------------------------------------------------------------------------------------
-const                        673.9623      3.159    213.348      0.000     667.771     680.154
-week_number                   -4.9234      0.357    -13.773      0.000      -5.624      -4.223
-seats_sold                   178.1038      0.647    275.266      0.000     176.836     179.372
-seats_in_theatre             -23.5103      0.662    -35.530      0.000     -24.807     -22.213
-performances                   9.1898      0.376     24.454      0.000       8.453       9.926
-weekly_gross_overall_sqrt     98.7586      0.428    230.718      0.000      97.920      99.598
-potential_gross_sqrt          11.1944      0.571     19.590      0.000      10.074      12.314
-top_ticket_price_sqrt         25.4359      0.506     50.251      0.000      24.444      26.428
-theatre_Broadhurst Theatre    14.3526      2.657      5.402      0.000       9.145      19.560
-theatre_Gershwin Theatre     -20.5082      3.211     -6.386      0.000     -26.802     -14.214
-theatre_Imperial Theatre      -8.6252      2.686     -3.212      0.001     -13.889      -3.362
-theatre_Majestic Theatre     -33.8709      2.702    -12.537      0.000     -39.166     -28.575
-theatre_Minskoff Theatre      15.5477      2.924      5.317      0.000       9.816      21.279
-theatre_Other                -15.3966      1.942     -7.927      0.000     -19.203     -11.590
-musical_type_mixed            39.7236      2.797     14.205      0.000      34.242      45.205
-musical_type_other             6.1169      2.563      2.386      0.017       1.093      11.141
-musical_type_pop_rock         39.5144      2.774     14.244      0.000      34.077      44.952
+const                        756.3559      4.795    157.744      0.000     746.958     765.754
+week_number                   -1.0878      0.547     -1.990      0.047      -2.159      -0.016
+seats_sold                   163.1829      0.644    253.301      0.000     161.920     164.446
+performances                   5.6318      0.566      9.958      0.000       4.523       6.740
+top_ticket_price_sqrt         75.4082      0.581    129.770      0.000      74.269      76.547
+theatre_Broadhurst Theatre   -33.8905      4.053     -8.361      0.000     -41.835     -25.946
+theatre_Gershwin Theatre    -129.8910      4.840    -26.839      0.000    -139.377    -120.405
+theatre_Imperial Theatre     -71.2440      4.094    -17.402      0.000     -79.268     -63.220
+theatre_Majestic Theatre     -57.1108      4.131    -13.826      0.000     -65.207     -49.014
+theatre_Minskoff Theatre     -38.7829      4.454     -8.706      0.000     -47.514     -30.052
+theatre_Other                -50.9115      2.966    -17.165      0.000     -56.725     -45.098
+musical_type_mixed            13.2716      4.251      3.122      0.002       4.939      21.604
+musical_type_other           -47.0988      3.886    -12.121      0.000     -54.715     -39.483
+musical_type_pop_rock         42.0663      4.237      9.928      0.000      33.761      50.371
 ==============================================================================
-Omnibus:                     1511.386   Durbin-Watson:                   1.630
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):             3936.609
-Skew:                           0.128   Prob(JB):                         0.00
-Kurtosis:                       4.430   Cond. No.                         26.0
-==============================================================================
-
-Notes:
-[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-
-Results are now more realistic (R2=0.89). In any case...we are going to eliminate the variable seats in theatre. It is highly correlated to seats sold (0.8):
-
-```
-
-``` Python
-                            OLS Regression Results                            
-==============================================================================
-Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.889
-Model:                            OLS   Adj. R-squared:                  0.889
-Method:                 Least Squares   F-statistic:                 2.390e+04
-Date:                Sun, 05 May 2024   Prob (F-statistic):               0.00
-Time:                        12:57:55   Log-Likelihood:            -2.5750e+05
-No. Observations:               44765   AIC:                         5.150e+05
-Df Residuals:                   44749   BIC:                         5.152e+05
-Df Model:                          15                                         
-Covariance Type:            nonrobust                                         
-==============================================================================================
-                                 coef    std err          t      P>|t|      [0.025      0.975]
-----------------------------------------------------------------------------------------------
-const                        668.2371      3.199    208.888      0.000     661.967     674.507
-week_number                   -5.2529      0.362    -14.497      0.000      -5.963      -4.543
-seats_sold                   162.7330      0.488    333.563      0.000     161.777     163.689
-performances                  10.9043      0.378     28.854      0.000      10.164      11.645
-weekly_gross_overall_sqrt    101.4556      0.427    237.512      0.000     100.618     102.293
-potential_gross_sqrt           4.2906      0.545      7.874      0.000       3.223       5.359
-top_ticket_price_sqrt         28.8074      0.504     57.139      0.000      27.819      29.796
-theatre_Broadhurst Theatre    15.7891      2.694      5.861      0.000      10.509      21.069
-theatre_Gershwin Theatre     -35.2512      3.229    -10.917      0.000     -41.580     -28.923
-theatre_Imperial Theatre     -11.0176      2.722     -4.047      0.000     -16.353      -5.682
-theatre_Majestic Theatre     -37.7764      2.737    -13.801      0.000     -43.142     -32.411
-theatre_Minskoff Theatre       8.2228      2.958      2.780      0.005       2.425      14.020
-theatre_Other                -16.1898      1.969     -8.221      0.000     -20.050     -12.330
-musical_type_mixed            45.9831      2.830     16.248      0.000      40.436      51.530
-musical_type_other            13.5566      2.591      5.233      0.000       8.479      18.634
-musical_type_pop_rock         45.3312      2.808     16.143      0.000      39.827      50.835
-==============================================================================
-Omnibus:                     1674.617   Durbin-Watson:                   1.692
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):             4314.809
-Skew:                           0.174   Prob(JB):                         0.00
-Kurtosis:                       4.481   Cond. No.                         25.0
-==============================================================================
-
-Notes:
-[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-```
-
-```Python
-
-And also the weekly gross overall, given this is the weekly gross for all shows, so a sum of the weekly gross...
-
-                            OLS Regression Results                            
-==============================================================================
-Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.749
-Model:                            OLS   Adj. R-squared:                  0.749
-Method:                 Least Squares   F-statistic:                     9545.
-Date:                Sun, 05 May 2024   Prob (F-statistic):               0.00
-Time:                        13:05:29   Log-Likelihood:            -2.7575e+05
-No. Observations:               44765   AIC:                         5.515e+05
-Df Residuals:                   44750   BIC:                         5.517e+05
-Df Model:                          14                                         
-Covariance Type:            nonrobust                                         
-==============================================================================================
-                                 coef    std err          t      P>|t|      [0.025      0.975]
-----------------------------------------------------------------------------------------------
-const                        750.7170      4.781    157.009      0.000     741.345     760.089
-week_number                   -1.2442      0.544     -2.286      0.022      -2.311      -0.178
-seats_sold                   156.0456      0.732    213.092      0.000     154.610     157.481
-performances                   4.3352      0.567      7.650      0.000       3.225       5.446
-potential_gross_sqrt          16.4678      0.816     20.191      0.000      14.869      18.066
-top_ticket_price_sqrt         66.7911      0.719     92.912      0.000      65.382      68.200
-theatre_Broadhurst Theatre   -36.2075      4.037     -8.969      0.000     -44.120     -28.295
-theatre_Gershwin Theatre    -129.5286      4.818    -26.885      0.000    -138.972    -120.086
-theatre_Imperial Theatre     -70.1894      4.076    -17.221      0.000     -78.178     -62.201
-theatre_Majestic Theatre     -59.1214      4.113    -14.373      0.000     -67.184     -51.059
-theatre_Minskoff Theatre     -41.3201      4.436     -9.314      0.000     -50.015     -32.625
-theatre_Other                -51.0102      2.953    -17.276      0.000     -56.798     -45.223
-musical_type_mixed            21.6189      4.252      5.084      0.000      13.284      29.953
-musical_type_other           -41.0629      3.880    -10.584      0.000     -48.667     -33.459
-musical_type_pop_rock         45.7628      4.222     10.839      0.000      37.487      54.038
-==============================================================================
-Omnibus:                      442.182   Durbin-Watson:                   0.831
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):              404.005
-Skew:                          -0.192   Prob(JB):                     1.87e-88
-Kurtosis:                       2.737   Cond. No.                         24.7
+Omnibus:                      378.584   Durbin-Watson:                   0.827
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              341.458
+Skew:                          -0.171   Prob(JB):                     7.13e-75
+Kurtosis:                       2.742   Cond. No.                         24.5
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
 ```
+The  scaled histograms have this shape:
+
+![standarised_final](Images/standarised_final.png)
+
 In this case, the model fits much more reasonable...the R2 says that 75% of the changes in weekly grosses are explained by the Xs. The variable weeknumber is non significant but it makes sense as it has no linear relationship with the Y
 
 ### Split, train, test
@@ -601,12 +520,13 @@ predictions=lm.predict(X_test)
 r2=r2_score(y_test, predictions)
 print(r2)
 
-0.7478265949763145
+0.7470755563396854
+
 ``` 
 
-After the training and the test, predictions show that the R2 of the model is 0.75, which is quite similar to the previous model. We can say our model is robust.
+After the training and the test, predictions show that the R2 of the model is 0.75, which is very similar to the OLS model. We can say our model is robust.
 
 
-** Conclusions ** 
+## ** Conclusions ** 
 
 Broadway is a world full of magic and sound...but also full of profits. Time Series analysis show the positive tendency over years regarding grosses (unless something unexpected happens!). The linear regression OLS model shows that, when accounting for outliers, skeweness and missing values, the weekly grosses can be explained not only for the shows displayed but also for the theatres, the ticket sales and the number of performances.
