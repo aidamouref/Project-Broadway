@@ -1,12 +1,10 @@
-# Project Broadway: Time Series Analysis and Linear Regressions on Weekly Gross
-
-## WELCOME TO BROADWAY!!
+# WELCOME TO BROADWAY!!
 
 ![broadway_opening](Images/broadway_opening.png)
 
-Broadway is the paradise for those who are in love with lights, colors, dancing and music. Throughout the vast History of this Boulevard tons of musicals and shows have passed by. Some more successful than others...but variety was everywhere. Broadway has attracted thousands of visitors not only from New York or the States, but from all around the world. This is not only traduced in millions of happy singing and clapping while enjoying the show...but also in revenues for producers, directors, actors and all those who live from it. 
+Is Broadway in danger?? such a colorful, joyful world full of music, dancing, creativity faces one of the biggest challenges: survive. The financial crisis together with Covid-19 pandemics and a lack of new ideas for musicals have been issues that may affect the productivity and therefore the profits obtained from shows. Will be humans living in a Miserábles world, without a Phantom of the Opera, a defying gravity Wicked or the felinity of Cats?
 
-Let the show begin!
+**Let the show begin!**
 
 
 ## **Table of Contents**
@@ -20,30 +18,31 @@ Let the show begin!
 * To wrap up (Conclusions)
 
 
-### Data Sources
+## *Data Sources*
+
 Data was obtained from Kaggle (PlayBill), more specifically *from the Broadway Weekly Grosses Dataset* (https://www.kaggle.com/datasets/jessemostipak/broadway-weekly-grosses?select=grosses.csv). This dataset is related to the weekly grosses obtained by theatres from The Broadway League, which is an association for Broadway Theatre. It's compounded of 13 variables and around 48k observations.
 
 There were also data on synopsis, cpi and other musicals starting before 1985. However for this analysis this information was
 considered unnecessary and therefore was discarded.
 
-### Metadata
+## *Metadata*
 
-- week_ending: Date of the end of the weekly measurement period. Always a Sunday.
-- week_number: Week number in the Broadway season. The season starts after the Tony Awards, held in early June. Some seasons have 53 weeks.
-- weekly_gross_overall: Weekly box office gross for all shows
+- **week_ending**: Date of the end of the weekly measurement period. Always a Sunday.
+- **week_number**: Week number in the Broadway season. The season starts after the Tony Awards, held in early June. Some seasons have 53 weeks.
+- **weekly_gross_overall**: Weekly box office gross for all shows
 - show: Name of show. Some shows have the same name, but multiple runs.
-- theatre: Name of theatre
-- weekly_gross: Weekly box office gross for individual show
-- potential_gross: Weekly box office gross if all seats are sold at full price. Shows can exceed their potential gross by selling premium  tickets and/or standing room tickets.
-- avg_ticket_price: Average price of tickets sold
-- top_ticket_price: Highest price of tickets sold
-- seats_sold: Total seats sold for all performances and previews
-- seats_in_theatre: Theatre seat capacity
-- pct_capacity: Percent of theatre capacity sold. Shows can exceed 100% capacity by selling standing room tickets.
-- performances: Number of performances in the week
-- previews: Number of preview performances in the week. Previews occur before a show's official open.
+- **theatre**: Name of theatre
+- **weekly_gross**: Weekly box office gross for individual show
+- **potential_gross**: Weekly box office gross if all seats are sold at full price. Shows can exceed their potential gross by selling premium  tickets and/or standing room tickets.
+- **avg_ticket_price**: Average price of tickets sold
+- **top_ticket_price**: Highest price of tickets sold
+- **seats_sold**: Total seats sold for all performances and previews
+- **seats_in_theatre**: Theatre seat capacity
+- **pct_capacity**: Percent of theatre capacity sold. Shows can exceed 100% capacity by selling standing room tickets.
+- **performances**: Number of performances in the week
+- **previews**: Number of preview performances in the week. Previews occur before a show's official open.
 
-### General Exploratory Data Analysis
+## *General Exploratory Data Analysis*
 
 ![cleaning_annie](Images/cleaning_annie.png)
 
@@ -141,7 +140,7 @@ nulls.sort_values(by='Percentage Null Values', ascending = False)
 
 The database was quite clean and only three variables had some missing data, but not enough to discard them for this reason. Also, no duplicate observations were found.
 
-## Time Series Analysis
+## *Time Series Analysis*
 
 ![backtofuture_timeseries](Images/backtofuture_timeseries.png)
 
@@ -151,17 +150,17 @@ Perfoming a weekly analysis we can see a nice increasing trend of the period 198
 
 ![timeseries_semanal](Images/timeseries_semanal.png)
 
-However, there is a fall in jan2016. Taking a closer look:
+However, there is a fall in Jan2016. Taking a closer look:
 
 ![timeseries_semanal_2015_2018](Images/timeseries_semanal_2015_2018.png)
 
-Weekly grosses were 0! this was due to a heavy snowfall that happened in that year that obligued theatres to close (no public transportation was available either). Source: https://ew.com/article/2016/01/23/broadway-shows-nyc-canceled-snowstorm/
+Weekly grosses were 0! this was due to a heavy snowfall that happened in that year that obligued theatres to close (no public transportation was available either for quite a long time). Source: https://ew.com/article/2016/01/23/broadway-shows-nyc-canceled-snowstorm/
 
 By looking at the weekly and weekly average trends (rolling window) we can see they're in line:
 
 ![rolling_window_ts_weekly](Images/rolling_window_ts_weekly.png)
 
-In order to check how the weekly grosses would affect in the next years a 2-year prediction was performed with Prophet:
+In order to check how the weekly grosses would be affected in the 'future' a 2-year prediction was performed with Prophet:
 
 ![prophet_forecast](Images/prophet_forecast.png)
 
@@ -169,14 +168,14 @@ In this graph the outlier week from 2016 can be also distinguished. The projecti
 
 ![prophet_components_fc](Images/prophet_components_fc.png)
 
-The components show a clear increasing tendency of the weekly grosses over the years. Also, the pattern within a year shows that summer months show higher weekly grosses (theatre season starts in June, also summer holidays...) decreases in September (back to work, back to school) and increases again in November-December (Christmas maybe?)
+The components show a clear increasing tendency of the weekly grosses over the years. Also, the pattern within a year shows that summer months show higher weekly grosses (theatre season starts in June, also summer holidays); they decrease in September (back to work, back to school) and increase again in November-December (Christmas, cheap flights, etc.)
 
 
-## Regression Analysis
+## *Regression Analysis*
 
 ### Specific Exploratory Data Analysis of Categorical Variables
 
-Given the huge amount of unique values in the categorical variables (n=xx in 'shows' and n=xx in 'theatres') these variables were treated to be included in the model.
+Given the huge amount of unique values in the categorical variables (n=1,122 in 'shows' and n=58 in 'theatres') these variables were treated to be included in the model.
 
 A new variable called 'musical_type' was created to classify shows into one of the following categories:
 
@@ -223,7 +222,7 @@ Name: count, dtype: int64
 
 ### Specific Exploratory Data Analysis of Numerical Variables
 
-An initial correlation matrix was conducted to check for multicollinearity in the numerical variables. The dependant variable (weekly_gross) was already included to check for multicollinearity with the other variables and see if any explicative variable was highly correlated to it (therefore could potentially explain it fairly well). 
+An initial correlation matrix was conducted to check for multicollinearity in the numerical variables. The dependant variable (weekly_gross) was already included to check for multicollinearity with the other variables and see if any explicative variable was highly correlated to it. 
 
 
 ![initial_corr_matrix](Images/initial_corr_matrix.png)
@@ -243,19 +242,17 @@ Then, distributions of each numeric variable were checked using a histogram. Als
 
 Transformations were made based on logarithms or square roots. If the distribution contained 0s (none had negative values) the squared root method was considered the first option, as logarithms of 0 are 1 and the variable would be weighted to 1. In any case, both methods were checked to see which one produced a more normalized distribution. The transformed variable was added to the dataframe and the original variable was dropped.
 
-![histog_post_transf](Images/histog_post_transf.png)histog_post-transf
+![histog_post_transf](Images/histog_post_transf.png)
 
-Outliers were then revised by checking the distributions. Most variables had a bit of positive skewness,except the average ticket price that had both positive and negative. Boxplots were also revised to see the outliers more easily. Let´s see the top ticket price  to illustrate this:
+Outliers were then revised by checking the distributions. Most variables had a bit of positive skewness,except the average ticket price that had both positive and negative. Boxplots were also revised to see the outliers more easily. Let´s see the seats sold to illustrate this:
 
-![top_ticket_outliers_boxpl](Images/top_ticket_outliers_boxpl.png)
+![seatsold_outlierspre_boxpl](Images/seatsold_outlierspre_boxpl.png)
 
 Some other variables such as the performances did not required treatment of outliers or the distribution was not a Normal (e.g. week number, which is basically Uniform).
 
-The Interquartile Range (IQR) was calculated for each variables with outliers. This measures the values that fall between the 1st and the 3rd quartile (therefore excluding extreme values). Upper or lower limits were constructed to include those values considered extreme. if the N was small and reasonable enough, these were dropped from the variables. Then, distributions and plots were again revised to check the shape of the variables after this transformation.
+The Interquartile Range (IQR) was calculated for each variables with outliers. This measures the values that fall between the 1st and the 3rd quartile (therefore excluding extreme values). Upper or lower limits were constructed to exclude those values considered extreme. if the N of outliers was small and reasonable enough, these were dropped from the variables. Then, distributions and plots were again revised to check the shape of the variables after this transformation.
 
-PONER BOXPLOT THE TOP TICKET TRAS LOS OUTLIERS
-
-A double-check was also made on the numerical variables to check if sales and performances were zero (this would not mean errors but for some reason e.g. closures etc. and these values would not be transformed).
+![seatsold_outlierspost_boxpl](Images/seatsold_outlierspost_boxpl.png)
 
 The correlation matrix was plotted again after the transformations. On those variables where the correlation was higher than 0.7 regressions of Xs were made to double-check them:
 
@@ -276,7 +273,7 @@ model.score(regression[['weekly_gross_overall_sqrt']], regression[['avg_ticket_p
 None of them were discarded as the R2 was considered not high enough.
 
 ### Final Steps before the Model:
-Now variables were clean and transformed, categorical variables were encoded in order to be included in the model. The encoding was performed using the OneHotEncoder from Sklearn. One of the categories (legit for musical_types and Ambassador theatre for theatres)was not considered by this method in order to avoid model overfitting.
+Now variables were clean and transformed, categorical variables were encoded in order to be included in the model. The encoding was performed using the OneHotEncoder from Sklearn. One of the categories (legit for musical_types and Ambassador theatre for theatres) was not considered by this method in order to avoid model overfitting.
 
 Numerical data was then normalized, scaled and standarised (also with the Normalizer, MinMaxScaler and StandardScaler methods from Sklearn) to check the best method to transform the data.
 
@@ -333,8 +330,8 @@ Notes:
 strong multicollinearity or other numerical problems.
 ```
 
-Most variables are significant (i.e. make an effect in the dependant variable) except the fact that the musical is showd in the Bradhurst Theatre or whether it was a pop-rock musical or mixed. This is also shown in the fact that the confidence intervals for these variables include the 0. As a result, the effect of these inputs may be any (positive, zero, negative) so no conclusions can be extracted from them.
-Other variables such as the top price of tickets or the number of seats sold clearly have an impact on weekly grosses. For example, a seat sold increases the weekly grosses in 1,242$. The fit of the model is pretty good given that the R2 is 0.63 (63% of variations in Y correspond to variations in Xs).
+Most variables are significant (i.e. make an effect in the dependant variable) except the fact that the musical is shown in the Bradhurst Theatre or whether it was a pop-rock musical or mixed. This is also shown in the fact that the confidence intervals for these variables include the 0. As a result, the effect of these inputs may be any (positive, zero, negative) so no conclusions can be extracted from them.
+Other variables such as the top price of tickets or the number of seats sold clearly have an impact on weekly grosses. For example, a seat sold increases the weekly grosses in 1,242$. The fit of the model seems pretty good given that the R2 is 0.63 (63% of variations in Y can be explained by variations in Xs).
 
 However, when we standarise or scale the variables the results differ!:
 
@@ -448,12 +445,12 @@ When revising again the distributions of the normalised, standard and scaled var
 
 ![standarised](Images/standarised.png)
 
-Results show that the normalised are now skewed! the shape of the standarised and scaled ones is practically identical and much more centered. The normalisation is not a good approach for this dataset. This means that the weekly grosses is really well explained by the explicative variables selected.
+Results show that the normalised distributions are now skewed! however, the shape of the standarised and scaled variables is practically identical and much more centered. The normalisation is not a good approach for this dataset. This means that the weekly grosses is really well explained by the explicative variables selected (almost 100% of variations in weekly grosses can be explained by the chosen Xs).
 
-### Wait! but...is it not TOO good?
+### Wait! but...is it not TOO good? 😳
 
-Maybe the reason for such good fit is that we are including variables that are highly correlated to the weekly grosses. The correlation matrix didn't show it but the average ticket is mainly the grosses by the number of tickets sold (i.e. number of seats sold in way). But as it is the average the correlation doesn't show that well in the matrix. 
-Also, variables 'seats in theatre' is quite correlated to seats sold. And potential gross as well as weekly gross overall might be quite related to the Y? There is quite high correlation (~0.6-0.7) between some dependant variables and also with the Y. So...let's take all these from the analysis!
+Maybe the reason for such good fit is that we are including variables that are highly correlated to the weekly grosses (i.e. we are using variables to explain the model that are in a way part of the Y itself!). The correlation matrix didn't show it but the average ticket price is the same ass the grosses by the number of tickets sold. As we are talking aobut the average the correlation does not show so clear in the matrix. 
+Also, variable 'seats in theatre' is quite correlated to seats sold. And 'potential gross' as well as 'weekly gross overall' might be quite related to the weekly grosses, isn't it? There is quite high correlation (~0.6-0.7) between some dependant variables and also with the Y itself. So...let's take all these out from the analysis!
 
 
 
@@ -499,15 +496,16 @@ Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
 ```
-The  scaled histograms have this shape:
+The standarised histograms have now this shape:
 
 ![standarised_final](Images/standarised_final.png)
 
-In this case, the model fits much more reasonable...the R2 says that 75% of the changes in weekly grosses are explained by the Xs. The variable weeknumber is non significant but it makes sense as it has no linear relationship with the Y
+In this case, the model fits much more reasonable...the R2 tells us that 75% of the changes in weekly grosses are explained by variations in the Xs. The variable 'weeknumber' is non significant but it makes sense as it has no linear relationship with the Y. The rest of the variables show a clear significance to the Y.
+If we touch nothing else, the weekly grosses are approximately $756 using this model. The number of performances, seats sold and the value of the top ticket price increase weekly grosses. Also, pop-rock musicals incrase profits more than other types of musicals. 
 
 ### Split, train, test
 
-In order to check the model, we are goint to split it to train and test:
+In order to check the model, we are goint to split it to have a part to be trained (80%) and a part to be tested (20%):
 
 ```Python 
 X=pd.concat((df_x_standarised, df_x_encoded), axis=1) 
@@ -529,4 +527,11 @@ After the training and the test, predictions show that the R2 of the model is 0.
 
 ## ** Conclusions ** 
 
-Broadway is a world full of magic and sound...but also full of profits. Time Series analysis show the positive tendency over years regarding grosses (unless something unexpected happens!). The linear regression OLS model shows that, when accounting for outliers, skeweness and missing values, the weekly grosses can be explained not only for the shows displayed but also for the theatres, the ticket sales and the number of performances.
+![final](Images/final.png)
+
+Broadway is a world full of magic and sound...but also full of profits. Time Series analysis show the positive tendency over years regarding grosses (unless something unexpected happens!). The linear regression OLS model shows that, when accounting for outliers, skeweness and missing values, the weekly grosses can be explained not only for the shows displayed but also for the theatres, the ticket sales and the number of performances. In order to save Broadway efforts need to be directed to increase the quantity and quality of performances to fill enough seats and carefully consider ticket prices. Focusing on improving these variables we may help Broadway survive!!
+
+**Let's keep believing in magic...**
+
+![unlimited](Images/unlimited.png)
+
