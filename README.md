@@ -2,7 +2,7 @@
 
 ![broadway_opening](Images/broadway_opening.png)
 
-Is Broadway in danger?? such a colorful, joyful world full of music, dancing, creativity faces one of the biggest challenges: survive. The financial crisis together with Covid-19 pandemics and a lack of new ideas for musicals have been issues that may affect the productivity and therefore the profits obtained from shows. Will be humans living in a Miserábles world, without a Phantom of the Opera, a defying gravity Wicked or the felinity of Cats?
+Is Broadway in danger?? such a colorful, joyful world full of music, dancing, creativity faces one of the biggest challenges: survive. The financial crisis together with Covid-19 pandemics and a lack of new ideas for musicals were issues that may affect the productivity and therefore the profits obtained from shows. Will be humans living in a Miserábles world, without a Phantom of the Opera, a defying gravity Wicked or the felinity of Cats?
 
 **Let the show begin!**
 
@@ -525,7 +525,7 @@ print(r2)
 After the training and the test, predictions show that the R2 of the model is 0.75, which is very similar to the OLS model. We can say our model is robust.
 
 
-## ** Conclusions ** 
+## *Conclusions*
 
 ![final](Images/final.png)
 
