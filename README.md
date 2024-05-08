@@ -25,12 +25,12 @@ Data was obtained from Kaggle (PlayBill), more specifically *from the Broadway W
 There were also data on synopsis, cpi and other musicals starting before 1985. However for this analysis this information was
 considered unnecessary and therefore was discarded.
 
-## *Metadata*
+## *Data Dictionary*
 
 - **week_ending**: Date of the end of the weekly measurement period. Always a Sunday.
 - **week_number**: Week number in the Broadway season. The season starts after the Tony Awards, held in early June. Some seasons have 53 weeks.
 - **weekly_gross_overall**: Weekly box office gross for all shows
-- show: Name of show. Some shows have the same name, but multiple runs.
+- **show**: Name of show. Some shows have the same name, but multiple runs.
 - **theatre**: Name of theatre
 - **weekly_gross**: Weekly box office gross for individual show
 - **potential_gross**: Weekly box office gross if all seats are sold at full price. Shows can exceed their potential gross by selling premium  tickets and/or standing room tickets.
@@ -170,6 +170,8 @@ In this graph the outlier week from 2016 can be also distinguished. The projecti
 
 The components show a clear increasing tendency of the weekly grosses over the years. Also, the pattern within a year shows that summer months show higher weekly grosses (theatre season starts in June, also summer holidays); they decrease in September (back to work, back to school) and increase again in November-December (Christmas, cheap flights, etc.)
 
+Acknowledging that we have not accounted for inflation in this analysis. Further analysis should be conducting taking into account this fact.
+
 
 ## *Regression Analysis*
 
@@ -189,6 +191,7 @@ A new variable called 'musical_type' was created to classify shows into one of t
 
 - Other: shows that do not fall into any of the mentioned categories.
 
+Acknowledging that the other category includes too many musicals. Further exhaustive research on musical categories to better classify shows.
 
 ```Python
 df_grosses.musical_type.value_counts()
@@ -256,6 +259,8 @@ None of them were discarded as the R2 was considered not high enough.
 
 ### Final Steps before the Model:
 Now variables were clean and transformed, categorical variables were encoded in order to be included in the model. The encoding was performed using the OneHotEncoder from Sklearn. One of the categories (legit) was not considered by this method in order to avoid model overfitting.
+
+Before running the OLS model, given that some variables still had quite many outliers I decided to transform by nomalising and then trying the other two methods: scaling and standarising. The differences that these methods represent to the model interpretation are varied and out of the Scope of this project, so for now we will stick to the one that provides more reasonable results (histograms, model fit, coefficients, etc.)
 
 Numerical data was then normalized, scaled and standarised (also with the Normalizer, MinMaxScaler and StandardScaler methods from Sklearn) to check the best method to transform the data.
 
