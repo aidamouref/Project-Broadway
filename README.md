@@ -175,7 +175,9 @@ The components show a clear increasing tendency of the weekly grosses over the y
 
 ### Specific Exploratory Data Analysis of Categorical Variables
 
-Given the huge amount of unique values in the categorical variables (n=1,122 in 'shows' and n=58 in 'theatres') these variables were treated to be included in the model.
+In order to check for the relation between the categorical variables a crosstab of both theaters and shows was performed. Usually, Broadway shows are always hosted in the same theatres so it was expected a relationship between these variables. When performing looking at the Chi-Squared p-values this is 0, showing that we definitely can reject the null hypothesis (H0: there is no relationship between both variables). In order to avoid multicollinearity, variable theatres was dropped (grosses should be more related to shows than to theatres).
+
+Given the huge amount of unique values in the variable 'show' (n=1,122 in 'shows') this variable was treated in order to be included in the model.
 
 A new variable called 'musical_type' was created to classify shows into one of the following categories:
 
@@ -201,25 +203,6 @@ Name: count, dtype: int64
 
 ![musical_type_barch](Images/musical_type_barch.png)
 
-Regarding theatres, same happened but no classification was considered. Instead, an encapsulation was made based on the theatres that were more present in the database (i.e. those with more activity)
-
-``` Python
-df_grosses.theatre.value_counts()
-
-theatre
-Other                 37476
-Broadhurst Theatre     1829
-Minskoff Theatre       1739
-Majestic Theatre       1677
-Imperial Theatre       1673
-Ambassador Theatre     1604
-Gershwin Theatre       1526
-Name: count, dtype: int64
-```
-
-![theatre_barch](Images/theatre_barch.png)
-
-
 ### Specific Exploratory Data Analysis of Numerical Variables
 
 An initial correlation matrix was conducted to check for multicollinearity in the numerical variables. The dependant variable (weekly_gross) was already included to check for multicollinearity with the other variables and see if any explicative variable was highly correlated to it. 
@@ -234,7 +217,6 @@ Scatterplots were made in order to check whether there was a linearity between t
 ![scatters_initial](Images/scatters_initial.png)
 
 Some associations show a linear positive relationship (when one variable increases, the other does too) such as avg_ticket price or seats sold. However, others such as number of weeks show a different shape (more uniform).
-
 
 Then, distributions of each numeric variable were checked using a histogram. Also, missing values where imputed using the mean values of the corresponding variable. Finally, cases where the value had no sense it was also treated (e.g. the variable seats in theatre had some 0s, so these were transformed to null and then imputed).
 
@@ -273,7 +255,7 @@ model.score(regression[['weekly_gross_overall_sqrt']], regression[['avg_ticket_p
 None of them were discarded as the R2 was considered not high enough.
 
 ### Final Steps before the Model:
-Now variables were clean and transformed, categorical variables were encoded in order to be included in the model. The encoding was performed using the OneHotEncoder from Sklearn. One of the categories (legit for musical_types and Ambassador theatre for theatres) was not considered by this method in order to avoid model overfitting.
+Now variables were clean and transformed, categorical variables were encoded in order to be included in the model. The encoding was performed using the OneHotEncoder from Sklearn. One of the categories (legit) was not considered by this method in order to avoid model overfitting.
 
 Numerical data was then normalized, scaled and standarised (also with the Normalizer, MinMaxScaler and StandardScaler methods from Sklearn) to check the best method to transform the data.
 
@@ -287,146 +269,131 @@ The OLS model was presented using the Linear Regression Library:
 
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.639
-Model:                            OLS   Adj. R-squared:                  0.639
-Method:                 Least Squares   F-statistic:                     4663.
-Date:                Sun, 05 May 2024   Prob (F-statistic):               0.00
-Time:                        11:56:56   Log-Likelihood:            -2.8389e+05
-No. Observations:               44765   AIC:                         5.678e+05
-Df Residuals:                   44747   BIC:                         5.680e+05
-Df Model:                          17                                         
+Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.612
+Model:                            OLS   Adj. R-squared:                  0.612
+Method:                 Least Squares   F-statistic:                     6425.
+Date:                Wed, 08 May 2024   Prob (F-statistic):               0.00
+Time:                        15:34:40   Log-Likelihood:            -2.8550e+05
+No. Observations:               44765   AIC:                         5.710e+05
+Df Residuals:                   44753   BIC:                         5.711e+05
+Df Model:                          11                                         
 Covariance Type:            nonrobust                                         
-==============================================================================================
-                                 coef    std err          t      P>|t|      [0.025      0.975]
-----------------------------------------------------------------------------------------------
-const                       -164.9451     23.552     -7.003      0.000    -211.108    -118.782
-week_number                -1.291e+04    313.337    -41.199      0.000   -1.35e+04   -1.23e+04
-seats_sold                  1242.7544     18.429     67.435      0.000    1206.633    1278.875
-seats_in_theatre           -1445.7659     22.771    -63.491      0.000   -1490.398   -1401.134
-performances               -1.278e+05   1862.943    -68.624      0.000   -1.31e+05   -1.24e+05
-weekly_gross_overall_sqrt    355.1243     14.289     24.853      0.000     327.118     383.131
-potential_gross_sqrt       -1195.8101     37.600    -31.804      0.000   -1269.506   -1122.114
-avg_ticket_price_sqrt       2.802e+05   5057.817     55.409      0.000     2.7e+05     2.9e+05
-top_ticket_price_sqrt      -9769.0658   2286.574     -4.272      0.000   -1.43e+04   -5287.343
-theatre_Broadhurst Theatre     2.4801      4.856      0.511      0.610      -7.038      11.999
-theatre_Gershwin Theatre      61.3559      5.842     10.502      0.000      49.905      72.806
-theatre_Imperial Theatre      39.3591      4.916      8.006      0.000      29.723      48.995
-theatre_Majestic Theatre     117.8626      4.912     23.997      0.000     108.236     127.489
-theatre_Minskoff Theatre     147.4619      5.312     27.762      0.000     137.051     157.873
-theatre_Other                -25.3525      3.552     -7.138      0.000     -32.314     -18.391
-musical_type_mixed             9.3696      5.099      1.838      0.066      -0.624      19.364
-musical_type_other          -138.8629      4.628    -30.007      0.000    -147.933    -129.793
-musical_type_pop_rock         -0.6343      5.070     -0.125      0.900     -10.572       9.303
+=============================================================================================
+                                coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------------------
+const                        36.3796     23.403      1.554      0.120      -9.490      82.250
+week_number               -1.346e+04    324.584    -41.454      0.000   -1.41e+04   -1.28e+04
+seats_sold                 1093.9587     18.783     58.243      0.000    1057.144    1130.773
+seats_in_theatre          -1469.8371     23.544    -62.428      0.000   -1515.985   -1423.690
+performances              -1.326e+05   1927.770    -68.788      0.000   -1.36e+05   -1.29e+05
+weekly_gross_overall_sqrt   206.8289     14.444     14.319      0.000     178.518     235.140
+potential_gross_sqrt      -1196.7614     38.936    -30.737      0.000   -1273.076   -1120.447
+avg_ticket_price_sqrt      2.768e+05   5227.149     52.961      0.000    2.67e+05    2.87e+05
+top_ticket_price_sqrt     -1.962e+04   2362.333     -8.307      0.000   -2.43e+04    -1.5e+04
+musical_type_mixed           12.6413      5.258      2.404      0.016       2.335      22.947
+musical_type_other         -125.1468      4.777    -26.196      0.000    -134.510    -115.783
+musical_type_pop_rock         4.5272      5.246      0.863      0.388      -5.755      14.810
 ==============================================================================
-Omnibus:                      850.540   Durbin-Watson:                   1.463
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):             1116.493
-Skew:                           0.251   Prob(JB):                    3.60e-243
-Kurtosis:                       3.588   Cond. No.                     1.43e+04
+Omnibus:                      638.117   Durbin-Watson:                   1.440
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              730.093
+Skew:                           0.247   Prob(JB):                    2.90e-159
+Kurtosis:                       3.384   Cond. No.                     1.28e+04
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The condition number is large, 1.43e+04. This might indicate that there are
+[2] The condition number is large, 1.28e+04. This might indicate that there are
 strong multicollinearity or other numerical problems.
+
 ```
 
-Most variables are significant (i.e. make an effect in the dependant variable) except the fact that the musical is shown in the Bradhurst Theatre or whether it was a pop-rock musical or mixed. This is also shown in the fact that the confidence intervals for these variables include the 0. As a result, the effect of these inputs may be any (positive, zero, negative) so no conclusions can be extracted from them.
-Other variables such as the top price of tickets or the number of seats sold clearly have an impact on weekly grosses. For example, a seat sold increases the weekly grosses in 1,242$. The fit of the model seems pretty good given that the R2 is 0.63 (63% of variations in Y can be explained by variations in Xs).
+Most variables are significant (i.e. make an effect in the dependant variable) except the fact that the musical was a pop-rock musical or mixed, as well as the constant. This is also shown in the fact that the confidence intervals for these variables include the 0. As a result, the effect of these inputs may be any (positive, zero, negative) so no conclusions can be extracted from them. 
 
-However, when we standarise or scale the variables the results differ!:
+Other variables such as the top price of tickets or the number of seats sold clearly have an impact on weekly grosses. For example, a seat sold increases the weekly grosses in 1,093$. The fit of the model seems pretty good given that the R2 is 0.61 (61% of variations in Y can be explained by variations in Xs).
+
+The fact that the constant itself is non-significant is a bit suspicious so let's see other transformations.
+
+When we standarise or scale the variables the results differ!:
 
 *Scaled Model*
 
 ``` Python 
-
                             OLS Regression Results                            
 ==============================================================================
 Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.989
 Model:                            OLS   Adj. R-squared:                  0.989
-Method:                 Least Squares   F-statistic:                 2.431e+05
-Date:                Sat, 04 May 2024   Prob (F-statistic):               0.00
-Time:                        13:10:40   Log-Likelihood:            -2.0516e+05
-No. Observations:               44765   AIC:                         4.104e+05
-Df Residuals:                   44747   BIC:                         4.105e+05
-Df Model:                          17                                         
+Method:                 Least Squares   F-statistic:                 3.717e+05
+Date:                Wed, 08 May 2024   Prob (F-statistic):               0.00
+Time:                        15:35:08   Log-Likelihood:            -2.0541e+05
+No. Observations:               44765   AIC:                         4.108e+05
+Df Residuals:                   44753   BIC:                         4.109e+05
+Df Model:                          11                                         
 Covariance Type:            nonrobust                                         
-==============================================================================================
-                                 coef    std err          t      P>|t|      [0.025      0.975]
-----------------------------------------------------------------------------------------------
-const                       -129.5257      1.252   -103.479      0.000    -131.979    -127.072
-week_number                    0.2375      0.382      0.622      0.534      -0.511       0.986
-seats_sold                   645.8851      1.065    606.397      0.000     643.797     647.973
-seats_in_theatre             -44.6251      0.890    -50.160      0.000     -46.369     -42.881
-performances                   2.1822      0.635      3.434      0.001       0.937       3.428
-weekly_gross_overall_sqrt     -1.1675      0.903     -1.293      0.196      -2.937       0.602
-potential_gross_sqrt         163.2131      1.394    117.055      0.000     160.480     165.946
-avg_ticket_price_sqrt        843.4455      1.323    637.306      0.000     840.852     846.040
-top_ticket_price_sqrt        -29.4076      1.141    -25.772      0.000     -31.644     -27.171
-theatre_Broadhurst Theatre     1.1643      0.837      1.391      0.164      -0.477       2.805
-theatre_Gershwin Theatre     -11.2081      1.012    -11.078      0.000     -13.191      -9.225
-theatre_Imperial Theatre      -9.0004      0.846    -10.639      0.000     -10.659      -7.342
-theatre_Majestic Theatre     -13.6928      0.852    -16.077      0.000     -15.362     -12.023
-theatre_Minskoff Theatre      -4.4660      0.922     -4.845      0.000      -6.273      -2.659
-theatre_Other                 -3.9266      0.612     -6.415      0.000      -5.126      -2.727
-musical_type_mixed            10.9158      0.882     12.374      0.000       9.187      12.645
-musical_type_other            -1.3214      0.808     -1.636      0.102      -2.904       0.262
-musical_type_pop_rock          2.0531      0.876      2.344      0.019       0.336       3.770
+=============================================================================================
+                                coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------------------
+const                      -130.8821      1.069   -122.468      0.000    -132.977    -128.787
+week_number                   0.1908      0.384      0.497      0.619      -0.562       0.943
+seats_sold                  642.8918      1.050    612.161      0.000     640.833     644.950
+seats_in_theatre            -46.4853      0.881    -52.759      0.000     -48.212     -44.758
+performances                  2.2143      0.637      3.474      0.001       0.965       3.464
+weekly_gross_overall_sqrt    -1.6641      0.900     -1.849      0.064      -3.428       0.100
+potential_gross_sqrt        164.4566      1.397    117.690      0.000     161.718     167.195
+avg_ticket_price_sqrt       844.8579      1.323    638.435      0.000     842.264     847.452
+top_ticket_price_sqrt       -30.2548      1.142    -26.486      0.000     -32.494     -28.016
+musical_type_mixed            9.6537      0.882     10.944      0.000       7.925      11.383
+musical_type_other           -2.8764      0.806     -3.568      0.000      -4.457      -1.296
+musical_type_pop_rock         2.0196      0.879      2.298      0.022       0.297       3.742
 ==============================================================================
-Omnibus:                    12213.734   Durbin-Watson:                   1.835
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):           115542.769
-Skew:                          -1.042   Prob(JB):                         0.00
-Kurtosis:                      10.590   Cond. No.                         35.2
+Omnibus:                    12541.618   Durbin-Watson:                   1.828
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):           116760.624
+Skew:                          -1.081   Prob(JB):                         0.00
+Kurtosis:                      10.611   Cond. No.                         30.8
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
 ```
 
-*Standarised Model*
-
+*Standardised Model*
 ``` Python
-
                             OLS Regression Results                            
 ==============================================================================
 Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.989
 Model:                            OLS   Adj. R-squared:                  0.989
-Method:                 Least Squares   F-statistic:                 2.431e+05
-Date:                Sun, 05 May 2024   Prob (F-statistic):               0.00
-Time:                        12:23:51   Log-Likelihood:            -2.0516e+05
-No. Observations:               44765   AIC:                         4.104e+05
-Df Residuals:                   44747   BIC:                         4.105e+05
-Df Model:                          17                                         
+Method:                 Least Squares   F-statistic:                 3.717e+05
+Date:                Wed, 08 May 2024   Prob (F-statistic):               0.00
+Time:                        15:56:16   Log-Likelihood:            -2.0541e+05
+No. Observations:               44765   AIC:                         4.108e+05
+Df Residuals:                   44753   BIC:                         4.109e+05
+Df Model:                          11                                         
 Covariance Type:            nonrobust                                         
-==============================================================================================
-                                 coef    std err          t      P>|t|      [0.025      0.975]
-----------------------------------------------------------------------------------------------
-const                        676.6278      0.995    679.917      0.000     674.677     678.578
-week_number                    0.0702      0.113      0.622      0.534      -0.151       0.291
-seats_sold                   131.3596      0.217    606.397      0.000     130.935     131.784
-seats_in_theatre             -10.5059      0.209    -50.160      0.000     -10.916     -10.095
-performances                   0.4093      0.119      3.434      0.001       0.176       0.643
-weekly_gross_overall_sqrt     -0.2661      0.206     -1.293      0.196      -0.669       0.137
-potential_gross_sqrt          21.1504      0.181    117.055      0.000      20.796      21.505
-avg_ticket_price_sqrt        143.6694      0.225    637.306      0.000     143.228     144.111
-top_ticket_price_sqrt         -4.2817      0.166    -25.772      0.000      -4.607      -3.956
-theatre_Broadhurst Theatre     1.1643      0.837      1.391      0.164      -0.477       2.805
-theatre_Gershwin Theatre     -11.2081      1.012    -11.078      0.000     -13.191      -9.225
-theatre_Imperial Theatre      -9.0004      0.846    -10.639      0.000     -10.659      -7.342
-theatre_Majestic Theatre     -13.6928      0.852    -16.077      0.000     -15.362     -12.023
-theatre_Minskoff Theatre      -4.4660      0.922     -4.845      0.000      -6.273      -2.659
-theatre_Other                 -3.9266      0.612     -6.415      0.000      -5.126      -2.727
-musical_type_mixed            10.9158      0.882     12.374      0.000       9.187      12.645
-musical_type_other            -1.3214      0.808     -1.636      0.102      -2.904       0.262
-musical_type_pop_rock          2.0531      0.876      2.344      0.019       0.336       3.770
+=============================================================================================
+                                coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------------------
+const                       673.7014      0.794    848.958      0.000     672.146     675.257
+week_number                   0.0564      0.113      0.497      0.619      -0.166       0.279
+seats_sold                  130.7509      0.214    612.161      0.000     130.332     131.169
+seats_in_theatre            -10.9439      0.207    -52.759      0.000     -11.350     -10.537
+performances                  0.4153      0.120      3.474      0.001       0.181       0.650
+weekly_gross_overall_sqrt    -0.3792      0.205     -1.849      0.064      -0.781       0.023
+potential_gross_sqrt         21.3115      0.181    117.690      0.000      20.957      21.666
+avg_ticket_price_sqrt       143.9100      0.225    638.435      0.000     143.468     144.352
+top_ticket_price_sqrt        -4.4050      0.166    -26.486      0.000      -4.731      -4.079
+musical_type_mixed            9.6537      0.882     10.944      0.000       7.925      11.383
+musical_type_other           -2.8764      0.806     -3.568      0.000      -4.457      -1.296
+musical_type_pop_rock         2.0196      0.879      2.298      0.022       0.297       3.742
 ==============================================================================
-Omnibus:                    12213.734   Durbin-Watson:                   1.835
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):           115542.769
-Skew:                          -1.042   Prob(JB):                         0.00
-Kurtosis:                      10.590   Cond. No.                         27.7
+Omnibus:                    12541.618   Durbin-Watson:                   1.828
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):           116760.624
+Skew:                          -1.081   Prob(JB):                         0.00
+Kurtosis:                      10.611   Cond. No.                         24.7
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
 ```
 
 The R2 in both standarised and scaled models is too good! are overfitting the model? why the normalised is better and the other 2 exactly match in such a high number?
@@ -454,42 +421,37 @@ Also, variable 'seats in theatre' is quite correlated to seats sold. And 'potent
 
 
 
-*Standarised*
+*Standardised*
 
 ``` Python
+
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.747
-Model:                            OLS   Adj. R-squared:                  0.747
-Method:                 Least Squares   F-statistic:                 1.016e+04
-Date:                Mon, 06 May 2024   Prob (F-statistic):               0.00
-Time:                        19:45:06   Log-Likelihood:            -2.7595e+05
-No. Observations:               44765   AIC:                         5.519e+05
-Df Residuals:                   44751   BIC:                         5.521e+05
-Df Model:                          13                                         
+Dep. Variable:      weekly_gross_sqrt   R-squared:                       0.742
+Model:                            OLS   Adj. R-squared:                  0.742
+Method:                 Least Squares   F-statistic:                 1.840e+04
+Date:                Wed, 08 May 2024   Prob (F-statistic):               0.00
+Time:                        16:03:24   Log-Likelihood:            -2.7636e+05
+No. Observations:               44765   AIC:                         5.527e+05
+Df Residuals:                   44757   BIC:                         5.528e+05
+Df Model:                           7                                         
 Covariance Type:            nonrobust                                         
-==============================================================================================
-                                 coef    std err          t      P>|t|      [0.025      0.975]
-----------------------------------------------------------------------------------------------
-const                        756.3559      4.795    157.744      0.000     746.958     765.754
-week_number                   -1.0878      0.547     -1.990      0.047      -2.159      -0.016
-seats_sold                   163.1829      0.644    253.301      0.000     161.920     164.446
-performances                   5.6318      0.566      9.958      0.000       4.523       6.740
-top_ticket_price_sqrt         75.4082      0.581    129.770      0.000      74.269      76.547
-theatre_Broadhurst Theatre   -33.8905      4.053     -8.361      0.000     -41.835     -25.946
-theatre_Gershwin Theatre    -129.8910      4.840    -26.839      0.000    -139.377    -120.405
-theatre_Imperial Theatre     -71.2440      4.094    -17.402      0.000     -79.268     -63.220
-theatre_Majestic Theatre     -57.1108      4.131    -13.826      0.000     -65.207     -49.014
-theatre_Minskoff Theatre     -38.7829      4.454     -8.706      0.000     -47.514     -30.052
-theatre_Other                -50.9115      2.966    -17.165      0.000     -56.725     -45.098
-musical_type_mixed            13.2716      4.251      3.122      0.002       4.939      21.604
-musical_type_other           -47.0988      3.886    -12.121      0.000     -54.715     -39.483
-musical_type_pop_rock         42.0663      4.237      9.928      0.000      33.761      50.371
+=========================================================================================
+                            coef    std err          t      P>|t|      [0.025      0.975]
+-----------------------------------------------------------------------------------------
+const                   709.1024      3.839    184.696      0.000     701.577     716.628
+week_number              -1.2766      0.552     -2.315      0.021      -2.358      -0.196
+seats_sold              160.7315      0.578    278.108      0.000     159.599     161.864
+performances              6.3664      0.570     11.178      0.000       5.250       7.483
+top_ticket_price_sqrt    75.6531      0.585    129.387      0.000      74.507      76.799
+musical_type_mixed        4.3528      4.269      1.020      0.308      -4.014      12.719
+musical_type_other      -50.3583      3.896    -12.924      0.000     -57.995     -42.721
+musical_type_pop_rock    41.6850      4.267      9.768      0.000      33.321      50.049
 ==============================================================================
-Omnibus:                      378.584   Durbin-Watson:                   0.827
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):              341.458
-Skew:                          -0.171   Prob(JB):                     7.13e-75
-Kurtosis:                       2.742   Cond. No.                         24.5
+Omnibus:                      501.524   Durbin-Watson:                   0.794
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              444.847
+Skew:                          -0.195   Prob(JB):                     2.53e-97
+Kurtosis:                       2.706   Cond. No.                         18.7
 ==============================================================================
 
 Notes:
@@ -518,7 +480,7 @@ predictions=lm.predict(X_test)
 r2=r2_score(y_test, predictions)
 print(r2)
 
-0.7470755563396854
+0.74174370719498
 
 ``` 
 
