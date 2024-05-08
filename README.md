@@ -20,7 +20,7 @@ Is Broadway in danger?? such a colorful, joyful world full of music, dancing, cr
 
 ## *Data Sources*
 
-Data was obtained from Kaggle (PlayBill), more specifically *from the Broadway Weekly Grosses Dataset* (https://www.kaggle.com/datasets/jessemostipak/broadway-weekly-grosses?select=grosses.csv). This dataset is related to the weekly grosses obtained by theatres from The Broadway League, which is an association for Broadway Theatre. It's compounded of 13 variables and around 48k observations.
+Data was obtained from Kaggle (PlayBill), more specifically *from the Broadway Weekly Grosses Dataset* (https://www.kaggle.com/datasets/jessemostipak/broadway-weekly-grosses?select=grosses.csv). This dataset is related to the weekly grosses obtained by theatres from The Broadway League, which is an association for Broadway Theatre. It's compounded of 14 variables and around 48k observations.
 
 There were also data on synopsis, cpi and other musicals starting before 1985. However for this analysis this information was
 considered unnecessary and therefore was discarded.
@@ -138,7 +138,7 @@ nulls.sort_values(by='Percentage Null Values', ascending = False)
 </div>
 
 
-The database was quite clean and only three variables had some missing data, but not enough to discard them for this reason. Also, no duplicate observations were found.
+The database was quite clean and only two variables had some missing data, but not enough to discard them for this reason. Also, no duplicate observations were found.
 
 ## *Time Series Analysis*
 
@@ -170,7 +170,7 @@ In this graph the outlier week from 2016 can be also distinguished. The projecti
 
 The components show a clear increasing tendency of the weekly grosses over the years. Also, the pattern within a year shows that summer months show higher weekly grosses (theatre season starts in June, also summer holidays); they decrease in September (back to work, back to school) and increase again in November-December (Christmas, cheap flights, etc.)
 
-Acknowledging that we have not accounted for inflation in this analysis. Further analysis should be conducting taking into account this fact.
+Please note that data was not adjusted by inflation due to time constraints in this analysis. Further analysis should be conducting taking into account this fact.
 
 
 ## *Regression Analysis*
@@ -179,19 +179,19 @@ Acknowledging that we have not accounted for inflation in this analysis. Further
 
 In order to check for the relation between the categorical variables a crosstab of both theaters and shows was performed. Usually, Broadway shows are always hosted in the same theatres so it was expected a relationship between these variables. When performing looking at the Chi-Squared p-values this is 0, showing that we definitely can reject the null hypothesis (H0: there is no relationship between both variables). In order to avoid multicollinearity, variable theatres was dropped (grosses should be more related to shows than to theatres).
 
-Given the huge amount of unique values in the variable 'show' (n=1,122 in 'shows') this variable was treated in order to be included in the model.
+Given the huge amount of unique values in the variable 'show' (n=1,122) this variable was treated in order to be included in the model.
 
 A new variable called 'musical_type' was created to classify shows into one of the following categories:
 
 - Legit: classically voiced singing with characteristics of nice rounded vowels, clear diction, lots of vibrato, smooth transitions, beautiful sustained notes and vocal flexibility.
 
-- Mixed: if the shows feature diverse musical influences, from Classical to Pop/Rock and everything in between.
+- Mixed: if the shows feature diverse musical influences, everything in between Classical to Pop-Rock.
 
-- Pop-Rock:decidedly pop/rock influenced, though that still covers a broad range of styles.
+- Pop-Rock: decidedly pop/rock influenced, though that still covers a broad range of styles.
 
 - Other: shows that do not fall into any of the mentioned categories.
 
-Acknowledging that the other category includes too many musicals. Further exhaustive research on musical categories to better classify shows.
+Please note that the 'other' category includes too many different types of musicals. Further exhaustive research on musical categories to better classify shows.
 
 ```Python
 df_grosses.musical_type.value_counts()
@@ -225,7 +225,7 @@ Then, distributions of each numeric variable were checked using a histogram. Als
 
 ![histog_pre_transf](Images/histog_pre_transf.png)
 
-Transformations were made based on logarithms or square roots. If the distribution contained 0s (none had negative values) the squared root method was considered the first option, as logarithms of 0 are 1 and the variable would be weighted to 1. In any case, both methods were checked to see which one produced a more normalized distribution. The transformed variable was added to the dataframe and the original variable was dropped.
+Transformations were made based on logarithms or square roots. If the distribution contained 0s (no variable had negative values) the squared root method was considered the first option, as logarithms of 0 are 1 and the variable would be weighted to 1. In any case, both methods were checked to see which one produced a more normalized distribution. The transformed variable was added to the dataframe and the original variable was dropped.
 
 ![histog_post_transf](Images/histog_post_transf.png)
 
@@ -260,7 +260,7 @@ None of them were discarded as the R2 was considered not high enough.
 ### Final Steps before the Model:
 Now variables were clean and transformed, categorical variables were encoded in order to be included in the model. The encoding was performed using the OneHotEncoder from Sklearn. One of the categories (legit) was not considered by this method in order to avoid model overfitting.
 
-Before running the OLS model, given that some variables still had quite many outliers I decided to transform by nomalising and then trying the other two methods: scaling and standarising. The differences that these methods represent to the model interpretation are varied and out of the Scope of this project, so for now we will stick to the one that provides more reasonable results (histograms, model fit, coefficients, etc.)
+Before running the OLS model, given that some variables still had quite many outliers a decision was taken to transform by nomalising and then trying the other two methods: scaling and standarising. The differences that these methods represent to the model interpretation are varied and out of the Scope of this project, so for now we will stick to the one that provides more reasonable results (histograms, model fit, coefficients, etc.)
 
 Numerical data was then normalized, scaled and standarised (also with the Normalizer, MinMaxScaler and StandardScaler methods from Sklearn) to check the best method to transform the data.
 
@@ -312,11 +312,9 @@ strong multicollinearity or other numerical problems.
 
 ```
 
-Most variables are significant (i.e. make an effect in the dependant variable) except the fact that the musical was a pop-rock musical or mixed, as well as the constant. This is also shown in the fact that the confidence intervals for these variables include the 0. As a result, the effect of these inputs may be any (positive, zero, negative) so no conclusions can be extracted from them. 
+Most variables are significant (i.e. make an effect in the dependant variable) except the fact that the musical was a pop-rock musical or mixed. This is also shown in the fact that the confidence intervals for these variables include the 0. As a result, the effect of these inputs may be any (positive, zero, negative) so no conclusions can be extracted from them regarding their effect on Y. 
 
 Other variables such as the top price of tickets or the number of seats sold clearly have an impact on weekly grosses. For example, a seat sold increases the weekly grosses in 1,093$. The fit of the model seems pretty good given that the R2 is 0.61 (61% of variations in Y can be explained by variations in Xs).
-
-The fact that the constant itself is non-significant is a bit suspicious so let's see other transformations.
 
 When we standarise or scale the variables the results differ!:
 
@@ -401,7 +399,7 @@ Notes:
 
 ```
 
-The R2 in both standarised and scaled models is too good! are overfitting the model? why the normalised is better and the other 2 exactly match in such a high number?
+The R2 in both standarised and scaled models is too good! are overfitting the model? why the normalised is better and the other two exactly match in such a high number?
 
 When revising again the distributions of the normalised, standard and scaled variables:
 
@@ -467,7 +465,7 @@ The standarised histograms have now this shape:
 
 ![standarised_final](Images/standarised_final.png)
 
-In this case, the model fits much more reasonable...the R2 tells us that 75% of the changes in weekly grosses are explained by variations in the Xs. The variable 'weeknumber' is non significant but it makes sense as it has no linear relationship with the Y. The rest of the variables show a clear significance to the Y.
+In this case, the distributions look quite centered and the model fits much more reasonable: the R2 reflects that 74% of the changes in weekly grosses are explained by variations in the Xs. The variable 'weeknumber' is non significant but it makes sense as it has no linear relationship with the Y. It actually could be dropped from the model. The rest of the variables show a clear significance to the Y.
 If we touch nothing else, the weekly grosses are approximately $756 using this model. The number of performances, seats sold and the value of the top ticket price increase weekly grosses. Also, pop-rock musicals incrase profits more than other types of musicals. 
 
 ### Split, train, test
@@ -489,14 +487,14 @@ print(r2)
 
 ``` 
 
-After the training and the test, predictions show that the R2 of the model is 0.75, which is very similar to the OLS model. We can say our model is robust.
+After the training and the test, predictions show that the R2 of the model is 0.74, which is same to the previous OLS model. We can say hence that our model is robust.
 
 
 ## *Conclusions*
 
 ![final](Images/final.png)
 
-Broadway is a world full of magic and sound...but also full of profits. Time Series analysis show the positive tendency over years regarding grosses (unless something unexpected happens!). The linear regression OLS model shows that, when accounting for outliers, skeweness and missing values, the weekly grosses can be explained not only for the shows displayed but also for the theatres, the ticket sales and the number of performances. In order to save Broadway efforts need to be directed to increase the quantity and quality of performances to fill enough seats and carefully consider ticket prices. Focusing on improving these variables we may help Broadway survive!!
+Broadway is a world full of magic and sound...but also full of profits. Time Series analysis show the positive tendency over years regarding grosses (unless something unexpected happens!), despite inflation effects should be considered. The linear regression OLS model shows that, when accounting for outliers, skeweness and missing values, the weekly grosses can be explained not only for the shows displayed but also for factors such as the ticket sales and the number of performances. In order to save Broadway efforts need to be directed to increase the quantity and quality of performances to fill enough seats and carefully consider ticket prices. Focusing on improving these variables we may help Broadway survive!!
 
 **Let's keep believing in magic...**
 
